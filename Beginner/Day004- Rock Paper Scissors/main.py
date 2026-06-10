@@ -1,3 +1,5 @@
+import subprocess
+import time
 import random
 
 CHOICES = {
@@ -10,17 +12,25 @@ WIN_RULES = {
     2: 1,
     3: 2,
 }
+USER_SCORE = 0
+COMP_SCORE = 0
+ROUND = 0
 
 
 def get_user_choice():
+    subprocess.run(["clear"])
     print("*** WELCOME TO ROCK PAPER SCISSORS ***\n")
-    print("Choose your move:")
+    global ROUND
+    ROUND += 1
+    print(f"⭐️ ROUND: {ROUND}")
+    print(f"⭐️ Your score: {USER_SCORE}")
+    print(f"⭐️ Computer's score: {COMP_SCORE}\n")
     for key, value in CHOICES.items():
         print(f"{key}: {value}")
 
     while True:
         try:
-            choice = int(input("Enter 1, 2, or 3: "))
+            choice = int(input("Choose your move: "))
         except ValueError:
             print("\n⚠️ Please enter a numeric value.")
             continue
@@ -32,9 +42,14 @@ def get_user_choice():
 def decide_winner(user_choice, comp_choice):
     if user_choice == comp_choice:
         return "It's a DRAW ⛔️"
-    return (
-        "You WIN 🏆" if WIN_RULES[user_choice] == comp_choice else "Computer WINS 😢🥀"
-    )
+    elif WIN_RULES[user_choice] == comp_choice:
+        global USER_SCORE
+        USER_SCORE += 1
+        return "\nYou WIN 🏆"
+    else:
+        global COMP_SCORE
+        COMP_SCORE += 1
+        return "\nComputer WINS 😢🥀"
 
 
 def main():
@@ -46,6 +61,11 @@ def main():
 
     result = decide_winner(user_choice, comp_choice)
     print(result)
+    time.sleep(2)
+    do_continue = input("Do you want to play next round? [YES/NO]: ").lower().strip()
+    if do_continue == "yes":
+        main()
+    return
 
 
 if __name__ == "__main__":
